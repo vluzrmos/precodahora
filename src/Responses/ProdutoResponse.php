@@ -2,58 +2,43 @@
 
 namespace Vluzrmos\Precodahora\Responses;
 
+use ArrayAccess;
+use JsonSerializable;
+use Vluzrmos\Precodahora\Models\BaseModel;
 use Vluzrmos\Precodahora\Models\Categoria;
 
-class ProdutoResponse
+/**
+ * @property string|null $codigo
+ * @property string|null $dataConsulta
+ * @property string|null $pagina
+ * @property string|null $totalPaginas
+ * @property string|null $totalRegistros
+ * @property string|null $registrosporPagina
+ * @property string|null $dias
+ * @property Categoria[]|null $categorias
+ * @property ProdutoResultado[]|null $resultado
+ */
+class ProdutoResponse extends BaseModel
 {
-    public readonly ?string $codigo;
-    public readonly ?string $dataConsulta;
-    public readonly ?string $pagina;
-    public readonly ?string $totalPaginas;
-    public readonly ?string $totalRegistros;
-    public readonly ?string $registrosporPagina;
-    public readonly ?string $dias;
-    protected array $categorias = [];
-
-    /**
-     * @var ProdutoResultado[]
-     */
-    protected array $resultado = [];
-
-    public function __construct(array $data = [])
+    public function setResultadoAttribute($value)
     {
-        foreach ($data as $key => $value) {
-            if (!property_exists($this, $key)) {
-                continue;
+        $this->attributes['resultado'] = array_map(function ($item) {
+            if ($item instanceof ProdutoResultado) {
+                return $item;
             }
 
-            if ($key === 'categorias') {
-                $this->categorias = array_map(function ($item) {
-                    return new Categoria($item);
-                }, $value);
-
-                continue;
-            }
-
-            if ($key === 'resultado') {
-                $this->resultado = array_map(function ($item) {
-                    return new ProdutoResultado($item);
-                }, $value);
-
-                continue;
-            }
-
-            $this->{$key} = $value;
-        }
+            return new ProdutoResultado($item);
+        }, $value);
     }
 
-    public function getResultado()
+    public function setCategoriasAttribute($value)
     {
-        return $this->resultado;
-    }
+        $this->attributes['categorias'] = array_map(function ($item) {
+            if ($item instanceof Categoria) {
+                return $item;
+            }
 
-    public function getCategorias()
-    {
-        return $this->categorias;
+            return new Categoria($item);
+        }, $value);
     }
 }

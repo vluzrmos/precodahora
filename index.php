@@ -13,7 +13,7 @@ $response = $client->produto(new ProdutoQuery([
     'longitude' => -39.2731087,
 ]));
 
-foreach ($response->getResultado() as $resultado) {
+foreach ($response->resultado ?? [] as $resultado) {
         echo "Produto: {$resultado->produto->descricao}\n";
         echo "Preço: {$resultado->produto->precoUnitario}\n";
         echo "Data: {$resultado->produto->data}\n";
