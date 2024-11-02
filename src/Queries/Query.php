@@ -2,7 +2,8 @@
 
 namespace Vluzrmos\Precodahora\Queries;
 
-use Vluzrmos\Precodahora\Exceptions\QueryParamRequiredException;
+use Vluzrmos\Precodahora\Exceptions\ValidationException;
+use Vluzrmos\Precodahora\Models\ErrorBag;
 
 class Query
 {
@@ -19,44 +20,57 @@ class Query
         $this->params = array_merge($this->params, $params);
     }
 
-    public function throwValidate()
+    /**
+     * @throws ValidationException
+     * @return bool
+     */
+    public function throwValidate(): bool
     {
         return $this->validate(true);
     }
 
-    public function validate($throw = false)
+    /**
+     * @param bool $throw
+     * @throws ValidationException
+     * @return bool
+     */
+    public function validate(bool $throw = false): bool
     {
+        $errors = new ErrorBag();
+
         foreach ($this->required as $key) {
             if (empty($this->params[$key])) {
-                if ($throw) {
-                    throw new \InvalidArgumentException("Query Param {$key} is required");
-                }
-
-                return false;
+                $errors->add($key, "Query param {$key} is required");
             }
         }
 
-        return !empty($this->required);
+        $valid = empty($this->required) || $errors->isEmpty();
+
+        if ($throw && !$valid) {
+            throw ValidationException::fromErrors($errors);
+        }
+
+        return $valid;
     }
 
-    public function setParam($key, $value)
+    public function setParam(string $key, mixed $value)
     {
         $this->params[$key] = $value;
 
         return $this;
     }
 
-    public function get($key)
+    public function get(string $key)
     {
         return $this->params[$key] ?? null;
     }
 
-    public function all()
+    public function all(): array
     {
         return $this->params;
     }
 
-    public function clean()
+    public function clean(): array
     {
         return array_filter($this->all(), function ($value) {
             return !empty($value);
@@ -64,7 +78,7 @@ class Query
     }
 
     /**
-     * @throws QueryParamRequiredException
+     * @throws ValidationException
      * @return string
      */
     public function getQuery()
@@ -74,7 +88,7 @@ class Query
         return http_build_query($this->params);
     }
 
-    public function forgetAttribute($key)
+    public function forgetAttribute(string $key)
     {
         unset($this->params[$key]);
 
