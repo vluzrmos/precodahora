@@ -1,0 +1,29 @@
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Vluzrmos\Precodahora\Client;
+use Vluzrmos\Precodahora\Queries\ProdutoQuery;
+
+$client = new Client();
+
+$response = $client->produto(new ProdutoQuery([
+    'termo' => 'feijao fradinho',
+    'latitude' => -14.7854636,
+    'longitude' => -39.2731087,
+]));
+
+foreach ($response->getResultado() as $resultado) {
+        echo "Produto: {$resultado->produto->descricao}\n";
+        echo "Preço: {$resultado->produto->precoUnitario}\n";
+        echo "Data: {$resultado->produto->data}\n";
+        echo "Estabelecimento: {$resultado->estabelecimento->nomeEstabelecimento}\n";
+        echo "Endereço: {$resultado->estabelecimento->endLogradouro}, nº{$resultado->estabelecimento->endNumero}\n";
+        echo "Bairro: {$resultado->estabelecimento->bairro}\n";
+        echo "CEP: {$resultado->estabelecimento->cep}\n";
+        echo "Cidade: {$resultado->estabelecimento->municipio}\n";
+        echo "Estado: {$resultado->estabelecimento->uf}\n";
+        echo "Telefone: {$resultado->estabelecimento->telefone}\n";
+
+        echo "--------------------------------\n";
+}
