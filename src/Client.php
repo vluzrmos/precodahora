@@ -1,20 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vluzrmos\Precodahora;
 
+use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Vluzrmos\Precodahora\Queries\ProdutoQuery;
+use Vluzrmos\Precodahora\Responses\ProdutoResponse;
 
 class Client
 {
-    protected $baseUrl = 'https://precodahora.ba.gov.br/';
-    protected $httpClient;
-    protected $cookieJar;
+    protected string $baseUrl = 'https://precodahora.ba.gov.br/';
+    protected HttpClient $httpClient;
+    protected CookieJar $cookieJar;
 
     public function __construct() {}
 
-    protected function getDefaultHttpClientOptions()
+    protected function getDefaultHttpClientOptions(): array
     {
         return [
             'base_uri' => $this->baseUrl,
@@ -37,19 +43,19 @@ class Client
         ];
     }
 
-    protected function getCookieJar()
+    protected function getCookieJar(): CookieJar
     {
-        if (!$this->cookieJar) {
-            $this->cookieJar = new \GuzzleHttp\Cookie\CookieJar();
+        if (!isset($this->cookieJar)) {
+            $this->cookieJar = new CookieJar();
         }
 
         return $this->cookieJar;
     }
 
-    protected function getHttpClient()
+    protected function getHttpClient(): HttpClient
     {
-        if (!$this->httpClient) {
-            $this->httpClient = new \GuzzleHttp\Client(
+        if (!isset($this->httpClient)) {
+            $this->httpClient = new HttpClient(
                 $this->getDefaultHttpClientOptions()
             );
         }
@@ -57,11 +63,13 @@ class Client
         return $this->httpClient;
     }
 
-    public function getCsrfToken($url)
+    public function getCsrfToken($url): ?string
     {
         $response = $this->request('GET', $url);
 
         $dom = new Crawler((string) $response->getBody(), $url);
+
+        $csrf = null;
 
         $dom->filter('#validate')->each(function (Crawler $node) use (&$csrf) {
             $csrf = $node->attr('data-id');
@@ -70,28 +78,24 @@ class Client
         return $csrf;
     }
 
-    public function request($method, $uri, array $options = [])
+    public function request($method, $uri, array $options = []): ResponseInterface
     {
         $client = $this->getHttpClient();
 
         return $client->request($method, $uri, $options);
     }
 
-    public function get($uri, $options = [])
+    public function get($uri, $options = []): ResponseInterface
     {
         return $this->request('GET', $uri, $options);
     }
 
-    public function post($uri, $options = [])
+    public function post($uri, $options = []): ResponseInterface
     {
         return $this->request('POST', $uri, $options);
     }
 
-    /**
-     * @param ProdutoQuery $query
-     * @return Responses\ProdutoResponse
-     */
-    public function produto(ProdutoQuery $query)
+    public function produto(ProdutoQuery $query): ProdutoResponse
     {
         $csrfToken = $this->getCsrfToken('/produtos/');
 
@@ -107,7 +111,7 @@ class Client
         return new Responses\ProdutoResponse($data ?: []);
     }
 
-    protected function responseToJson(Response $response)
+    protected function responseToJson(ResponseInterface $response): mixed
     {
         return json_decode($response->getBody()->getContents(), true);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vluzrmos\Precodahora;
 
 class RandomUserAgent
@@ -16,16 +18,21 @@ class RandomUserAgent
         'edge-linux' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.2849.68',
     ];
 
-    public static function get($key)
+    public static function get(string $key): string|false
     {
         if (!isset(self::$userAgents[$key])) {
-            throw new \InvalidArgumentException("User agent key {$key} not found.");
+            return false;
         }
 
         return self::$userAgents[$key];
     }
 
-    public static function random()
+    public static function findIndex($userAgent): string|false
+    {
+        return array_search($userAgent, self::$userAgents);
+    }
+
+    public static function random(): string
     {
         $userAgent = array_rand(self::$userAgents);
 
