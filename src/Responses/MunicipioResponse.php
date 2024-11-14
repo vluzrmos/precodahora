@@ -23,7 +23,7 @@ class MunicipioResponse extends BaseResponse
 
     public function findByCodigoIBGE(int $codigoIBGE): ?Municipio
     {
-        foreach ($this->resultado ?? [] as $municipio) {
+        foreach ($this->resultado as $municipio) {
             if ($municipio->codigoIBGE === $codigoIBGE) {
                 return $municipio;
             }
