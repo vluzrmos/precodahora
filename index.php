@@ -12,12 +12,12 @@ $codigoIBGEItabuna = 2914802;
 $codigoIBGE = (int) ($argv[1] ?? $codigoIBGEItabuna);
 
 try {
-    $itabuna = $client->municipios()->findByCodigoIBGE($codigoIBGE);
+    $municipio = $client->municipios()->findByCodigoIBGE($codigoIBGE);
 
     $response = $client->produto(new ProdutoQuery([
         'termo' => 'feijao fradinho',
-        'latitude' => $itabuna?->latitude,
-        'longitude' => $itabuna?->longitude,
+        'latitude' => $municipio?->latitude,
+        'longitude' => $municipio?->longitude,
     ]));
 } catch (ValidationException $e) {
     $errors = $e->getErrors();
