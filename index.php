@@ -8,11 +8,16 @@ use Vluzrmos\Precodahora\Queries\ProdutoQuery;
 
 $client = new Client();
 
+$codigoIBGEItabuna = 2914802;
+$codigoIBGE = (int) ($argv[1] ?? $codigoIBGEItabuna);
+
 try {
+    $itabuna = $client->municipios()->findByCodigoIBGE($codigoIBGE);
+
     $response = $client->produto(new ProdutoQuery([
         'termo' => 'feijao fradinho',
-        'latitude' => -14.7854636,
-        'longitude' => -39.2731087,
+        'latitude' => $itabuna?->latitude,
+        'longitude' => $itabuna?->longitude,
     ]));
 } catch (ValidationException $e) {
     $errors = $e->getErrors();

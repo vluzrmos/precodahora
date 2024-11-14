@@ -8,17 +8,10 @@ use Vluzrmos\Precodahora\Models\BaseModel;
 use Vluzrmos\Precodahora\Models\Categoria;
 
 /**
- * @property string|null $codigo
- * @property string|null $dataConsulta
- * @property string|null $pagina
- * @property string|null $totalPaginas
- * @property string|null $totalRegistros
- * @property string|null $registrosporPagina
- * @property string|null $dias
  * @property Categoria[]|null $categorias
  * @property ProdutoResultado[]|null $resultado
  */
-class ProdutoResponse extends BaseModel
+class ProdutoResponse extends BaseResponse
 {
     public function setResultadoAttribute($value)
     {

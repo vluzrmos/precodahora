@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Vluzrmos\Precodahora\Queries\ProdutoQuery;
+use Vluzrmos\Precodahora\Responses\MunicipioResponse;
 use Vluzrmos\Precodahora\Responses\ProdutoResponse;
 
 class Client
@@ -109,6 +110,27 @@ class Client
         $data = $this->responseToJson($this->post('/produtos/', $options));
 
         return new Responses\ProdutoResponse($data ?: []);
+    }
+
+    public function municipios()
+    {
+        $csrfToken = $this->getCsrfToken('/produtos/');
+
+        $options = [
+            'headers' => [
+                'X-Csrftoken' => $csrfToken
+            ]
+        ];
+
+        $response = $this->post('/municipios/', $options);
+        
+        $data = $this->responseToJson($response);
+
+        if (is_string($data)) { // when the response comes as a string and not a json encoded
+            $data = json_decode($data, true);
+        }
+
+        return new MunicipioResponse($data);
     }
 
     protected function responseToJson(ResponseInterface $response): mixed
