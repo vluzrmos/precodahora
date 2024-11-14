@@ -2,7 +2,6 @@
 
 namespace Vluzrmos\Precodahora\Responses;
 
-use Symfony\Component\String\UnicodeString;
 use Vluzrmos\Precodahora\Models\Municipio;
 use function Symfony\Component\String\u;
 
