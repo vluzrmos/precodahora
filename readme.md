@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Cliente para busca de preços dos produtos nos principais mercados/supermercados da bahia.
+Cliente para busca de preços dos produtos nos principais mercados/supermercados da Bahia.
 
 Os preços são obtidos através do site [https://precodahora.ba.gov.br/](https://precodahora.ba.gov.br/).
 
