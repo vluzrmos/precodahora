@@ -27,18 +27,20 @@ try {
     exit(1);
 }
 
-
 foreach ($response->resultado ?? [] as $resultado) {
-    echo "Produto: {$resultado->produto->descricao}\n";
-    echo "Preço: {$resultado->produto->precoUnitario}\n";
-    echo "Data: {$resultado->produto->data}\n";
-    echo "Estabelecimento: {$resultado->estabelecimento->nomeEstabelecimento}\n";
-    echo "Endereço: {$resultado->estabelecimento->endLogradouro}, nº{$resultado->estabelecimento->endNumero}\n";
-    echo "Bairro: {$resultado->estabelecimento->bairro}\n";
-    echo "CEP: {$resultado->estabelecimento->cep}\n";
-    echo "Cidade: {$resultado->estabelecimento->municipio}\n";
-    echo "Estado: {$resultado->estabelecimento->uf}\n";
-    echo "Telefone: {$resultado->estabelecimento->telefone}\n";
+    $produto = $resultado->produto;
+    $estabelecimento = $resultado->estabelecimento;
+
+    echo "Produto: {$produto->descricao}\n";
+    echo "Preço: {$produto->precoUnitario}\n";
+    echo "Data: {$produto->data}\n";
+    echo "Estabelecimento: {$estabelecimento->nomeEstabelecimento}\n";
+    echo "Endereço: {$estabelecimento->endLogradouro}, nº{$estabelecimento->endNumero}\n";
+    echo "Bairro: {$estabelecimento->bairro}\n";
+    echo "CEP: {$estabelecimento->cep}\n";
+    echo "Cidade: {$estabelecimento->municipio}\n";
+    echo "Estado: {$estabelecimento->uf}\n";
+    echo "Telefone: {$estabelecimento->telefone}\n";
 
     echo "--------------------------------\n";
 }
