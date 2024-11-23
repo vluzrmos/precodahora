@@ -19,12 +19,12 @@ use Vluzrmos\Precodahora\Queries\ProdutoQuery;
 
 $client = new Client();
 
-// Código IBGE da Cidade de Itabuna/Bahia
 $codigoIBGEItabuna = 2914802;
+$codigoIBGE = (int) ($argv[1] ?? $codigoIBGEItabuna);
+$termo = (string) ($argv[2] ?? 'feijao fradinho');
 
 try {
-    // Nota: não é necessário pesquisar o município se você já souber a latitude e longitude de um ponto ou do centro do município.
-    $municipio = $client->municipios()->findByCodigoIBGE($codigoIBGEItabuna);
+    $municipio = $client->municipios()->findByCodigoIBGE($codigoIBGE);
 
     $query = (new ProdutoQuery())
         ->termo($termo)
@@ -40,6 +40,11 @@ try {
 
     exit(1);
 }
+
+echo "Município: {$municipio->localidade}\n";
+echo "Latitude: {$municipio->latitude}\n";
+echo "Longitude: {$municipio->longitude}\n";
+echo "--------------------------------\n\n";
 
 foreach ($response->resultado ?? [] as $resultado) {
     $produto = $resultado->produto;
