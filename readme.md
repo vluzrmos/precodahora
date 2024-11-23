@@ -71,6 +71,14 @@ foreach ($response->resultado ?? [] as $resultado) {
 chmod +x /path/to/this-project/run.sh
 ```
 
+É possível executar `example.php` passando o codigo IBGE da cidade como argumento:
+
+```bash
+# Exemplo: Ilhéus/Bahia
+/path/to/this-project/run.sh php example.php 2913606
+```
+
+
 ## Atenção
 
 > **Nota:** Este cliente não é oficial e não tem nenhuma relação com o site [https://precodahora.ba.gov.br/](https://precodahora.ba.gov.br/).

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ARGS=("$@")
+ARGS="$@"
 
 if (( $# == 0 )); then
     ARGS="php example.php"

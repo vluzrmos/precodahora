@@ -27,6 +27,11 @@ try {
     exit(1);
 }
 
+echo "Município: {$municipio->localidade}\n";
+echo "Latitude: {$municipio->latitude}\n";
+echo "Longitude: {$municipio->longitude}\n";
+echo "--------------------------------\n\n";
+
 foreach ($response->resultado ?? [] as $resultado) {
     $produto = $resultado->produto;
     $estabelecimento = $resultado->estabelecimento;
