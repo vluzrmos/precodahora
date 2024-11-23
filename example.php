@@ -10,15 +10,18 @@ $client = new Client();
 
 $codigoIBGEItabuna = 2914802;
 $codigoIBGE = (int) ($argv[1] ?? $codigoIBGEItabuna);
+$termo = (string) ($argv[2] ?? 'feijao fradinho');
 
 try {
     $municipio = $client->municipios()->findByCodigoIBGE($codigoIBGE);
 
-    $response = $client->produto(new ProdutoQuery([
-        'termo' => 'feijao fradinho',
-        'latitude' => $municipio?->latitude,
-        'longitude' => $municipio?->longitude,
-    ]));
+    $query = (new ProdutoQuery())
+        ->termo($termo)
+        ->latitude($municipio?->latitude)
+        ->longitude($municipio?->longitude)
+        ->ordenarPorDistancia();
+
+    $response = $client->produto($query);
 } catch (ValidationException $e) {
     $errors = $e->getErrors();
 

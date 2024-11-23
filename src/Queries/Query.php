@@ -2,14 +2,14 @@
 
 namespace Vluzrmos\Precodahora\Queries;
 
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ValidatorBuilder;
 use Vluzrmos\Precodahora\Exceptions\ValidationException;
 use Vluzrmos\Precodahora\Models\ErrorBag;
 
 class Query
 {
     protected array $params = [];
-
-    protected array $required = [];
 
     /**
      *
@@ -18,6 +18,11 @@ class Query
     public function __construct(array $params = [])
     {
         $this->params = array_merge($this->params, $params);
+    }
+
+    public function getValidationRules()
+    {
+        return [];
     }
 
     /**
@@ -36,24 +41,27 @@ class Query
      */
     public function validate(bool $throw = false): bool
     {
+        $validator = Validation::createValidator();
         $errors = new ErrorBag();
 
-        foreach ($this->required as $key) {
-            if (empty($this->params[$key])) {
-                $errors->add($key, "Query param {$key} is required");
+        foreach ($this->getValidationRules() as $key => $rules) {
+            $violations = $validator->validate($this->params[$key] ?? null, $rules);
+
+            if ($violations->count() > 0) {
+                foreach ($violations as $violation) {
+                    $errors->add($key, $violation->getMessage());
+                }
             }
         }
 
-        $valid = empty($this->required) || $errors->isEmpty();
-
-        if ($throw && !$valid) {
+        if ($throw && !$errors->isEmpty()) {
             throw ValidationException::fromErrors($errors);
         }
 
-        return $valid;
+        return true;
     }
 
-    public function setParam(string $key, mixed $value)
+    public function set(string $key, mixed $value)
     {
         $this->params[$key] = $value;
 
@@ -103,5 +111,30 @@ class Query
     public function __toString()
     {
         return $this->getQuery();
+    }
+
+    public function __call($name, array $arguments)
+    {
+        if (mb_stripos($name, 'set') === 0) {
+            $name = lcfirst(substr($name, 3));
+        }
+
+        if (empty($arguments)) {
+            return $this->get($name);
+        }
+
+        $this->set($name, $arguments[0]);
+
+        return $this;
+    }
+
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
+
+    public function __set($name, $value)
+    {
+        $this->set($name, $value);
     }
 }

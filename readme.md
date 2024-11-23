@@ -26,11 +26,13 @@ try {
     // Nota: não é necessário pesquisar o município se você já souber a latitude e longitude de um ponto ou do centro do município.
     $municipio = $client->municipios()->findByCodigoIBGE($codigoIBGEItabuna);
 
-    $response = $client->produto(new ProdutoQuery([
-        'termo' => 'feijao fradinho',
-        'latitude' => $municipio?->latitude,
-        'longitude' => $municipio?->longitude,
-    ]));
+    $query = (new ProdutoQuery())
+        ->termo($termo)
+        ->latitude($municipio?->latitude)
+        ->longitude($municipio?->longitude)
+        ->ordenarPorDistancia();
+
+    $response = $client->produto($query);
 } catch (ValidationException $e) {
     $errors = $e->getErrors();
 
