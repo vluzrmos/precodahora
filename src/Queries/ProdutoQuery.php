@@ -5,6 +5,7 @@ namespace Vluzrmos\Precodahora\Queries;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Optional;
 use Vluzrmos\Precodahora\Exceptions\QueryParamRequiredException;
 
 /**
@@ -96,12 +97,12 @@ class ProdutoQuery extends Query
                 new GreaterThanOrEqual(1, message: 'ProdutoQuery param raio must be greater than or equal to 1'),
                 new LessThanOrEqual(30, message: 'ProdutoQuery param raio must be less than or equal to 30'),
             ],
-            'precomin' => [
+            'precomin' => new Optional([
                 new GreaterThanOrEqual(0.00, message: 'ProdutoQuery param precomin must be greater than or equal to {{ compared_value }}'),
-            ],
-            'precomax' => [
+            ]),
+            'precomax' => new Optional([
                 new GreaterThanOrEqual(0.00, message: 'ProdutoQuery param precomin must be greater than or equal to {{ compared_value }}'),
-            ],
+            ]),
         ];
     }
     /**

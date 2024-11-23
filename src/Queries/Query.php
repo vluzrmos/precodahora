@@ -2,8 +2,8 @@
 
 namespace Vluzrmos\Precodahora\Queries;
 
+use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\ValidatorBuilder;
 use Vluzrmos\Precodahora\Exceptions\ValidationException;
 use Vluzrmos\Precodahora\Models\ErrorBag;
 
@@ -44,13 +44,19 @@ class Query
         $validator = Validation::createValidator();
         $errors = new ErrorBag();
 
-        foreach ($this->getValidationRules() as $key => $rules) {
-            $violations = $validator->validate($this->params[$key] ?? null, $rules);
+        $violations = $validator->validate(
+            $this->params,
+            new Collection(
+                $this->getValidationRules(),
+                allowExtraFields: true,
+            ),
+        );
 
-            if ($violations->count() > 0) {
-                foreach ($violations as $violation) {
-                    $errors->add($key, $violation->getMessage());
-                }
+        if ($violations->count() > 0) {
+            foreach ($violations as $violation) {
+                $key = str_replace(['][', '[', ']'], ['.', '', ''], $violation->getPropertyPath());
+
+                $errors->add($key, $violation->getMessage());
             }
         }
 
