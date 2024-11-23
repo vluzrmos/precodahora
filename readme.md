@@ -63,7 +63,7 @@ foreach ($response->resultado ?? [] as $resultado) {
 ```bash
 /path/to/this-project/run.sh
 ```
-> Se nenhum argumento for passado, o script fara o build do container docker e executar o comando "php example.php" presente na pasta do projeto.
+> Se nenhum argumento for passado, o script fará o build do container docker e executará o comando "php example.php" presente na pasta do projeto.
 
 > Talvez seja necessário dar permissão de execução ao script:
 
