@@ -58,6 +58,19 @@ foreach ($response->resultado ?? [] as $resultado) {
 }
 ```
 
+## Docker
+
+```bash
+/path/to/this-project/run.sh
+```
+> Se nenhum argumento for passado, o script fara o build do container docker e executar o comando "php example.php" presente na pasta do projeto.
+
+> Talvez seja necessário dar permissão de execução ao script:
+
+```bash
+chmod +x /path/to/this-project/run.sh
+```
+
 ## Atenção
 
 > **Nota:** Este cliente não é oficial e não tem nenhuma relação com o site [https://precodahora.ba.gov.br/](https://precodahora.ba.gov.br/).
