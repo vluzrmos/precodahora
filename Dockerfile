@@ -19,3 +19,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && install-php-extensions mbstring xml json tokenizer openssl zip curl \
     && apt-get clean
+
+COPY . /app/
+
+WORKDIR /app
+
+RUN composer install 
