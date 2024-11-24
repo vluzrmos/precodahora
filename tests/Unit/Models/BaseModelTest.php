@@ -10,7 +10,7 @@ it('should be instance of BaseModel', function () {
     ]);
 
     expect(BaseModel::class)->toUseTrait(HasAttributes::class);
-    
+
     $this->assertInstanceOf(BaseModel::class, $model);
     $this->assertEquals(1, $model->getKey());
     $this->assertEquals('id', $model->getKeyName());
@@ -22,14 +22,19 @@ it('should be instance of BaseModel', function () {
 
     $this->assertEquals(['id' => 1, 'name' => 'John Doe'], $model->toArray());
     $this->assertEquals(['id' => 1, 'name' => 'John Doe'], $model->jsonSerialize());
-    
+
     $model->fill(['name' => 'Jane Doe 2']);
+
     $this->assertEquals('Jane Doe 2', $model->getAttribute('name'));
     $this->assertEquals('Jane Doe 2', $model->name);
+
     $model->setAttribute('name', 'Jane Doe 3');
+
     $this->assertEquals('Jane Doe 3', $model->getAttribute('name'));
     $this->assertEquals('Jane Doe 3', $model->name);
+
     $model->name = 'Jane Doe 4';
+
     $this->assertEquals('Jane Doe 4', $model->getAttribute('name'));
     $this->assertEquals('Jane Doe 4', $model->name);
 
@@ -47,5 +52,4 @@ it('should be instance of BaseModel', function () {
     $this->assertEquals('Jane Doe 5', $model->offsetGet('name'));
     $model->offsetUnset('name');
     $this->assertNull($model->offsetGet('name'));
-    
 });

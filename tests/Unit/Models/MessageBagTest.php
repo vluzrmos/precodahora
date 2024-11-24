@@ -21,9 +21,8 @@ it('should add a message to the bag', function () {
     expect($messageBag->isEmpty())->toBeFalse();
 
     $messageBag->clear();
+
     expect($messageBag->isEmpty())->toBeTrue();
     expect($messageBag->get('name'))->toBe(null);
     expect($messageBag->first('name'))->toBeNull();
-
 });
-

@@ -17,7 +17,9 @@ it('can add parameters to ProdutoQuery', function () {
     $query->set('name', 'John Doe');
     $query->set('age', 30);
     $query->set('email', 'something@like.this');
+
     $query->is_admin = true;
+
     $query->ordenarPorPreco();
 
     expect($query->name)->toBe('John Doe');
@@ -49,7 +51,7 @@ it('throw validation exception for latitude and longitude', function () {
 
 it('should ordenar', function ($by, $throw) {
     $query = new ProdutoQuery();
-    
+
     if ($throw) {
         $this->expectException(QueryParamRequiredException::class);
     }
