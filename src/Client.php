@@ -23,7 +23,7 @@ class Client
         //
     }
 
-    protected function getDefaultHttpClientOptions(): array
+    public function getDefaultHttpClientOptions(): array
     {
         return [
             'base_uri' => $this->baseUrl,
@@ -46,7 +46,7 @@ class Client
         ];
     }
 
-    protected function getCookieJar(): CookieJar
+    public function getCookieJar(): CookieJar
     {
         if (!isset($this->cookieJar)) {
             $this->cookieJar = new CookieJar();

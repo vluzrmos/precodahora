@@ -9,7 +9,7 @@ class BaseModel implements JsonSerializable, ArrayAccess
 {
     use HasAttributes;
 
-    protected string $keyName;
+    protected string $keyName = 'id';
 
     public function __construct(array $attributes = [])
     {

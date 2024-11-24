@@ -10,7 +10,7 @@ BUILD_ID=$(docker build -q . -t vluzrmos/precodahora:latest)
 
 if [ "$BUILD_ID" != "" ]; then
 cd "$(dirname "$0")"
-docker run --rm -it -v .:/app -w /app $BUILD_ID $ARGS
+docker run -e XDEBUG_MODE=coverage --rm -it -v .:/app -w /app $BUILD_ID $ARGS
 else
 echo "Error: Docker build failed" > /dev/stderr
 exit 1

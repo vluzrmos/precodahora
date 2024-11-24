@@ -4,9 +4,22 @@ namespace Vluzrmos\Precodahora\Models;
 
 class MessageBag
 {
-    public function __construct(protected array $messages = [])
+    protected array $messages = [];
+
+    public function __construct(array $messages = [])
     {
-        //
+        $this->fromArray($messages);
+    }
+
+    public function fromArray(array $messages = [])
+    {
+        foreach ($messages as $key => $group) {
+            $group = is_array($group) ? $group : [$group];
+
+            foreach ($group as $message) {
+                $this->add($key, $message);
+            }
+        }
     }
 
     public function add(string $key, string $message)

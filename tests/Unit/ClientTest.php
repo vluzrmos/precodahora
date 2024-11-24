@@ -153,3 +153,86 @@ it('can request produtos', function () {
     expect($resultado->estabelecimento['nomeEstabelecimento'])->toBe('Nome Estabelecimento Teste');
     expect($resultado->estabelecimento['municipio'])->toBe('Teste');
 });
+
+it('can get a cookie jar', function () {
+    $client = new Client();
+
+    $cookieJar = $client->getCookieJar();
+
+    expect($cookieJar)->toBeInstanceOf(GuzzleHttp\Cookie\CookieJar::class);
+});
+
+it('can get a http client', function () {
+    $client = new Client();
+
+    $httpClient = $client->getHttpClient();
+
+    expect($httpClient)->toBeInstanceOf(HttpClient::class);
+});
+
+it('can get a csrf token', function () {
+    /** @var LegacyMockInterface&MockInterface&HttpClient $http */
+    $http = Mockery::mock(HttpClient::class);
+
+    $http->shouldReceive('request')
+        ->with('GET', '/produtos/', Mockery::andAnyOtherArgs())
+        ->andReturn(csrf_response());
+
+    $client = new Client($http);
+
+    expect($client)->toBeInstanceOf(Client::class);
+
+    $csrf = $client->getCsrfToken('/produtos/');
+
+    expect($csrf)->toBe('ImMxZjA1Yjc0MzE0NDZkZjMwY2EwYjc3YTVlZTM5NjgxOWU1NjcyNjQi.Z0KR6w.8by8Z1ydWV44-CyG8A8Z6HA-Y98');
+});
+
+it('can request', function () {
+    /** @var LegacyMockInterface&MockInterface&HttpClient $http */
+    $http = Mockery::mock(HttpClient::class);
+
+    $http->shouldReceive('request')
+        ->with('GET', '/produtos/', Mockery::andAnyOtherArgs())
+        ->andReturn(csrf_response());
+
+    $client = new Client($http);
+
+    expect($client)->toBeInstanceOf(Client::class);
+
+    $response = $client->request('GET', '/produtos/');
+
+    expect($response)->toBeInstanceOf(Response::class);
+});
+
+it('can make get em post request from get and post methods', function () {
+    /** @var LegacyMockInterface&MockInterface&HttpClient $http */
+    $http = Mockery::mock(HttpClient::class);
+
+    $http->shouldReceive('request')
+        ->with('GET', '/produtos/', Mockery::andAnyOtherArgs())
+        ->andReturn(csrf_response());
+
+    $http->shouldReceive('request')
+        ->with('GET', '/produtos/', Mockery::andAnyOtherArgs())
+        ->andReturn(csrf_response());
+
+    $http->shouldReceive('request')
+        ->with('POST', '/produtos/', Mockery::andAnyOtherArgs())
+        ->andReturn(produto_response());
+
+    $http->shouldReceive('request')
+        ->with('POST', '/produtos/', Mockery::andAnyOtherArgs())
+        ->andReturn(produto_response());
+
+    $client = new Client($http);
+
+    expect($client)->toBeInstanceOf(Client::class);
+
+    $response = $client->get('/produtos/');
+
+    expect($response)->toBeInstanceOf(Response::class);
+
+    $response = $client->post('/produtos/');
+
+    expect($response)->toBeInstanceOf(Response::class);
+});

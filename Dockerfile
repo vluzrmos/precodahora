@@ -4,10 +4,7 @@ FROM php:8.2-cli-bullseye
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Install PHP extensions installer
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
-# Make the installer executable
-RUN chmod +x /usr/local/bin/install-php-extensions
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
 # Install PHP extensions: mbstring, xml, json, zip, curl, tokenizer, openssl
 RUN apt-get update && apt-get install -y \
@@ -17,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    && install-php-extensions mbstring xml json tokenizer openssl zip curl \
+    && install-php-extensions mbstring xml json tokenizer openssl zip curl xdebug \
     && apt-get clean
 
 COPY . /app/
