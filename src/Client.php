@@ -16,10 +16,12 @@ use Vluzrmos\Precodahora\Responses\ProdutoResponse;
 class Client
 {
     protected string $baseUrl = 'https://precodahora.ba.gov.br/';
-    protected HttpClient $httpClient;
     protected CookieJar $cookieJar;
 
-    public function __construct() {}
+    public function __construct(protected ?HttpClient $httpClient = null)
+    {
+        //
+    }
 
     protected function getDefaultHttpClientOptions(): array
     {
@@ -53,7 +55,7 @@ class Client
         return $this->cookieJar;
     }
 
-    protected function getHttpClient(): HttpClient
+    public function getHttpClient(): HttpClient
     {
         if (!isset($this->httpClient)) {
             $this->httpClient = new HttpClient(
@@ -123,7 +125,7 @@ class Client
         ];
 
         $response = $this->post('/municipios/', $options);
-        
+
         $data = $this->responseToJson($response);
 
         if (is_string($data)) { // when the response comes as a string and not a json encoded
