@@ -85,6 +85,11 @@ chmod +x /path/to/this-project/run.sh
 /path/to/this-project/run.sh php example.php 2913606
 ```
 
+Executar testes:
+
+```bash
+/path/to/this-project/run.sh vendor/bin/pest
+```
 
 ## Atenção
 
