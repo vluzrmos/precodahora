@@ -4,6 +4,9 @@ use Vluzrmos\Precodahora\Client;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
+use Mockery\LegacyMockInterface;
+use Mockery\Mock;
+use Mockery\MockInterface;
 use Vluzrmos\Precodahora\Queries\ProdutoQuery;
 
 it('should return a new instance of Client', function () {
@@ -53,12 +56,16 @@ function municipio_response(?array $data = null)
 }
 
 it('can request municipios', function () {
-    $handler = new MockHandler([
-        csrf_response(),
-        municipio_response(),
-    ]);
+    /** @var LegacyMockInterface&MockInterface&HttpClient $http */
+    $http = Mockery::mock(HttpClient::class);
 
-    $http = new HttpClient(['handler' => $handler]);
+    $http->shouldReceive('request')
+        ->with('GET', '/produtos/', Mockery::andAnyOtherArgs())
+        ->andReturn(csrf_response());
+
+    $http->shouldReceive('request')
+        ->with('POST', '/municipios/', Mockery::andAnyOtherArgs())
+        ->andReturn(municipio_response());
 
     $client = new Client($http);
 
@@ -104,23 +111,35 @@ function produto_response(?array $data = null)
     );
 }
 it('can request produtos', function () {
-    $handler = new MockHandler([
-        csrf_response(),
-        produto_response(),
-    ]);
+    /** @var LegacyMockInterface&MockInterface&HttpClient $http */
+    $http = Mockery::mock(HttpClient::class);
 
-    $http = new HttpClient(['handler' => $handler]);
+    // GET CSRF
+    $http->shouldReceive('request')
+        ->with('GET', '/produtos/', Mockery::andAnyOtherArgs())
+        ->andReturn(csrf_response());
+
+    $produtoQuery = (new ProdutoQuery())
+        ->termo('TESTE')
+        ->latitude(0.1)
+        ->longitude(0.2);
+
+    // POST PRODUTO QUERY
+    $http->shouldReceive('request')
+        ->with(
+            'POST',
+            '/produtos/',
+            Mockery::subset([
+                'body' => $produtoQuery->toString(),
+            ])
+        )
+        ->andReturn(produto_response());
 
     $client = new Client($http);
 
     expect($client)->toBeInstanceOf(Client::class);
 
-    $response = $client->produto(
-        (new ProdutoQuery())
-            ->termo('TESTE')
-            ->latitude(0.1)
-            ->longitude(0.2)
-    );
+    $response = $client->produto($produtoQuery);
 
     $resultado = $response->resultado[0];
 
