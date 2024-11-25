@@ -25,6 +25,5 @@ jobs:
       - name: Run tests
         run: |
           docker run --rm \
-            -v ${{ github.workspace }}:/app \
             php-project \
-            vendor/bin/pest
+            /app/vendor/bin/pest
