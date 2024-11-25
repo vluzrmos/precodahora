@@ -123,6 +123,16 @@ class Query
     {
         if (mb_stripos($name, 'set') === 0) {
             $name = lcfirst(substr($name, 3));
+
+            $this->set($name, $arguments[0]);
+
+            return $this;
+        }
+
+        if (mb_stripos($name, 'get') === 0) {
+            $name = lcfirst(substr($name, 3));
+
+            return $this->get($name);
         }
 
         if (empty($arguments)) {

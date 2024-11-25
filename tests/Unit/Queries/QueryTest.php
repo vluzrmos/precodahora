@@ -1,5 +1,8 @@
 <?php
 
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Optional;
+use Vluzrmos\Precodahora\Exceptions\ValidationException;
 use Vluzrmos\Precodahora\Queries\Query;
 
 it('can create Query', function () {
@@ -33,4 +36,46 @@ it('can add parameters to Query', function () {
     expect($query->all())->toBe($data);
 
     expect($query->toString())->toBe(http_build_query($data));
+
+    $query->empty_value = '';
+
+    $data = $query->clean();
+
+    expect($data)->not()->toHaveKey('empty_value');
+
+    $query->forgetit = 1;
+
+    $query->forgetAttribute('forgetit');
+
+    expect($query->all())->not()->toHaveKey('forgetit');
+
+    $query->setValue(1);
+
+    expect($query->getValue())->toBe(1);
+    expect($query->value())->toBe(1);
+
+    $instance = new class extends Query {
+        public function getValidationRules()
+        {
+            return [
+                'value' => new Optional([
+                    new NotBlank(message: 'value is required')
+                ])
+            ];
+        }
+    };
+
+    $instance->setValue('');
+
+    /** @var ValidationException $exception */
+    $exception = null;
+
+    try {
+        $instance->throwValidate();
+    } catch (ValidationException $e) {
+        $exception = $e;
+    }
+
+    expect($exception->getErrors()->messages())->toHaveKey('value');
+    expect($exception->getErrors()->first('value'))->toBe('value is required');
 });
