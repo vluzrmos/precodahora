@@ -3,6 +3,8 @@
 use Vluzrmos\Precodahora\Exceptions\ValidationException;
 use Vluzrmos\Precodahora\Models\ErrorBag;
 
+covers(ValidationException::class);
+
 it('should be instance of ValidationException', function () {
     $exception = new ValidationException();
 

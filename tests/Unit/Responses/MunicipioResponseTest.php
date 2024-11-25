@@ -3,6 +3,8 @@
 use Vluzrmos\Precodahora\Models\Municipio;
 use Vluzrmos\Precodahora\Responses\MunicipioResponse;
 
+covers(MunicipioResponse::class);
+
 it('can create MunicipioResponse', function () {
     $response = new MunicipioResponse([
         'resultado' => [

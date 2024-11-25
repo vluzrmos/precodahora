@@ -3,6 +3,9 @@
 use Vluzrmos\Precodahora\Models\BaseModel;
 use Vluzrmos\Precodahora\Models\HasAttributes;
 
+covers(BaseModel::class);
+# covers(HasAttributes::class); //deprecated
+
 it('should be instance of BaseModel', function () {
     $model = new BaseModel([
         'id' => 1,

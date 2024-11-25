@@ -2,6 +2,8 @@
 
 use Vluzrmos\Precodahora\RandomUserAgent;
 
+covers(RandomUserAgent::class);
+
 it('can generate a random user agent', function () {
     $userAgent = RandomUserAgent::random();
     expect($userAgent)->toBeString();

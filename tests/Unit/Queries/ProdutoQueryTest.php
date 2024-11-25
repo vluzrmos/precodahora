@@ -6,6 +6,8 @@ use Vluzrmos\Precodahora\Models\ErrorBag;
 use Vluzrmos\Precodahora\Queries\ProdutoQuery;
 use Vluzrmos\Precodahora\Queries\Query;
 
+covers(ProdutoQuery::class);
+
 it('can create ProdutoQuery', function () {
     $query = new ProdutoQuery();
     expect($query)->toBeInstanceOf(ProdutoQuery::class);

@@ -5,6 +5,8 @@ use Symfony\Component\Validator\Constraints\Optional;
 use Vluzrmos\Precodahora\Exceptions\ValidationException;
 use Vluzrmos\Precodahora\Queries\Query;
 
+covers(Query::class);
+
 it('can create Query', function () {
     $query = new Query();
     expect($query)->toBeInstanceOf(Query::class);

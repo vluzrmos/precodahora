@@ -9,6 +9,8 @@ use Mockery\Mock;
 use Mockery\MockInterface;
 use Vluzrmos\Precodahora\Queries\ProdutoQuery;
 
+covers(Client::class);
+
 it('should return a new instance of Client', function () {
     $client = new Client();
     expect($client)->toBeInstanceOf(Client::class);

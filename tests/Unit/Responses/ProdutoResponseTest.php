@@ -4,6 +4,8 @@ use Vluzrmos\Precodahora\Models\Categoria;
 use Vluzrmos\Precodahora\Responses\ProdutoResponse;
 use Vluzrmos\Precodahora\Responses\ProdutoResultado;
 
+covers(ProdutoResponse::class);
+
 it('can create ProdutoResponse', function () {
     $response = new ProdutoResponse([
         'resultado' => [
