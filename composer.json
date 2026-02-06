@@ -25,7 +25,8 @@
     "require-dev": {
         "pestphp/pest": "^3.5",
         "symfony/var-dumper": "^7.1",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "laravel/prompts": "^0.3.12"
     },
     "config": {
         "allow-plugins": {

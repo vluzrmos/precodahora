@@ -6,49 +6,98 @@ use Vluzrmos\Precodahora\Client;
 use Vluzrmos\Precodahora\Exceptions\ValidationException;
 use Vluzrmos\Precodahora\Queries\ProdutoQuery;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\text;
+
 $client = new Client();
 
-$codigoIBGEItabuna = 2914802;
-$codigoIBGE = (int) ($argv[1] ?? $codigoIBGEItabuna);
-$termo = (string) ($argv[2] ?? 'feijao fradinho');
+$localidadeOrCodigoIBGE = $argv[1] ?? null;
+$termo = $argv[2] ?? null;
 
-try {
-    $municipio = $client->municipios()->findByCodigoIBGE($codigoIBGE);
+$defaultLocalidade = null;
+$defaultTermo = null;
 
-    $query = (new ProdutoQuery())
-        ->termo($termo)
-        ->latitude($municipio?->latitude)
-        ->longitude($municipio?->longitude)
-        ->ordenarPorDistancia();
+while (true) {
+    $localidadeOrCodigoIBGE = $localidadeOrCodigoIBGE ?: text(label: 'Digite a localidade ou código IBGE do município', hint: 'Digite "sair" para encerrar', default: (string) $defaultLocalidade);
 
-    $response = $client->produto($query);
-} catch (ValidationException $e) {
-    $errors = $e->getErrors();
+    if (strtolower($localidadeOrCodigoIBGE) === 'sair') {
+        echo "Encerrando o programa...\n";
+        exit(0);
+    }
 
-    echo implode("\n", $errors?->all()) . PHP_EOL;
+    $termo = $termo ?: text(label: 'Digite o termo de busca ou o código de barras', hint: 'Digite "sair" para encerrar', default: (string) $defaultTermo);
 
-    exit(1);
-}
+    if (strtolower($termo) === 'sair') {
+        echo "Encerrando o programa...\n";
+        exit(0);
+    }
 
-echo "Município: {$municipio->localidade}\n";
-echo "Latitude: {$municipio->latitude}\n";
-echo "Longitude: {$municipio->longitude}\n";
-echo "--------------------------------\n\n";
+    if (empty($localidadeOrCodigoIBGE) || empty($termo)) {
+        error('Localidade/Código IBGE e termo de busca são obrigatórios. Por favor, tente novamente.');
+        $localidadeOrCodigoIBGE = null;
+        $termo = null;
+        continue;
+    }
 
-foreach ($response->resultado ?? [] as $resultado) {
-    $produto = $resultado->produto;
-    $estabelecimento = $resultado->estabelecimento;
+    try {
+        $municipio = is_numeric($localidadeOrCodigoIBGE) ?
+            $client->municipios()->findByCodigoIBGE($localidadeOrCodigoIBGE) : ($client->municipios()->findByLocalidade($localidadeOrCodigoIBGE)[0] ?? null);
 
-    echo "Produto: {$produto->descricao}\n";
-    echo "Preço: {$produto->precoUnitario}\n";
-    echo "Data: {$produto->data}\n";
-    echo "Estabelecimento: {$estabelecimento->nomeEstabelecimento}\n";
-    echo "Endereço: {$estabelecimento->endLogradouro}, nº{$estabelecimento->endNumero}\n";
-    echo "Bairro: {$estabelecimento->bairro}\n";
-    echo "CEP: {$estabelecimento->cep}\n";
-    echo "Cidade: {$estabelecimento->municipio}\n";
-    echo "Estado: {$estabelecimento->uf}\n";
-    echo "Telefone: {$estabelecimento->telefone}\n";
+        $query = (new ProdutoQuery());
 
-    echo "--------------------------------\n";
-}
+        if (is_numeric($termo)) {
+            $query->gtin($termo);
+        } else {
+            $query->termo($termo);
+        }
+
+        $query->latitude($municipio?->latitude)
+            ->longitude($municipio?->longitude)
+            ->ordenarPorDistancia();
+
+        $response = $client->produto($query);
+    } catch (ValidationException $e) {
+        $errors = $e->getErrors();
+
+        echo implode("\n", $errors?->all()) . PHP_EOL;
+
+        exit(1);
+    }
+
+    $defaultLocalidade = $localidadeOrCodigoIBGE;
+    $defaultTermo = $termo;
+
+    $localidadeOrCodigoIBGE = null;
+    $termo = null;
+
+    echo "Município: {$municipio->localidade}\n";
+    echo "Latitude: {$municipio->latitude}\n";
+    echo "Longitude: {$municipio->longitude}\n";
+    echo "--------------------------------\n\n";
+
+    foreach ($response->resultado ?? [] as $resultado) {
+        $produto = $resultado->produto;
+        $estabelecimento = $resultado->estabelecimento;
+
+        echo "Produto: {$produto->descricao}\n";
+        echo "Preço: {$produto->precoUnitario}\n";
+
+        // Necessário usar um visualizador de imagens pois o *Preço da Hora* faz download 
+        // da imagem ao invés de apenas exibir.
+        if ($produto->foto) {
+            $viewer = 'https://gosoccerboy5.github.io/view-images/#';
+            echo "Foto: {$viewer}{$produto->foto}\n";
+        }
+
+        echo "Data: {$produto->data}\n";
+        echo "Estabelecimento: {$estabelecimento->nomeEstabelecimento}\n";
+        echo "Endereço: {$estabelecimento->endLogradouro}, nº {$estabelecimento->endNumero}\n";
+        echo "Bairro: {$estabelecimento->bairro}\n";
+        echo "CEP: {$estabelecimento->cep}\n";
+        echo "Cidade: {$estabelecimento->municipio}\n";
+        echo "Estado: {$estabelecimento->uf}\n";
+        echo "Telefone: {$estabelecimento->telefone}\n";
+
+        echo "--------------------------------\n";
+    }
+};
